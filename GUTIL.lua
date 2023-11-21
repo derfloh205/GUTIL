@@ -2,7 +2,7 @@
 
 
 ---@class GUTIL
-local GUTIL = LibStub:NewLibrary("GUTIL", 1)
+local GUTIL = LibStub:NewLibrary("GUTIL", 1) or LibStub:GetLibrary("GUTIL")
 
 --- CLASSICS insert
 local Object = {}
