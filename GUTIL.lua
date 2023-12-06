@@ -390,12 +390,21 @@ function GUTIL:Count(t, func)
   return count
 end
 
---- Returns true if any of the table's items resolves to true for the fiven function
+--- Returns true if any of the table's items resolves to true for the given function
 ---@param t table
 ---@param func function 
 ---@return boolean 
 function GUTIL:Some(t, func)
     return self:Count(t, func) > 0
+end
+
+--- Returns true if all of the table's items resolve to true for the given function
+---@param t table
+---@param func function 
+---@return boolean 
+function GUTIL:Every(t, func)
+  local tableCount = self:Count(t)
+  return self:Count(t, func) == tableCount
 end
 
 function GUTIL:Sort(t, compFunc)
