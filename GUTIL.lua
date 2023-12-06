@@ -297,6 +297,10 @@ function GUTIL:GetPercentRelativeTo(value, hundredPercentValue)
       return percent
 end
 
+--- formats the given copper value as gold, silver and copper display with icons
+---@param copperValue number
+---@param useColor boolean -- colors the numbers green if positive and red if negative
+---@param percentRelativeTo number? if included: will be treated as 100% and a % value in relation to the coppervalue will be added
 function GUTIL:FormatMoney(copperValue, useColor, percentRelativeTo)
   local absValue = abs(copperValue)
   local minusText = ""
