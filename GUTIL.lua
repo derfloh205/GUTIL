@@ -373,6 +373,10 @@ function GUTIL:GetQualityIconString(qualityID, sizeX, sizeY, offsetX, offsetY)
   return CreateAtlasMarkup("Professions-Icon-Quality-Tier" .. qualityID, sizeX, sizeY, offsetX, offsetY)
 end
 
+--- Counts the number of items that return true for the given function
+---@param t table
+---@param func function
+---@return number count
 function GUTIL:Count(t, func)
   local count = 0
   for _, v in pairs(t) do
@@ -384,6 +388,14 @@ function GUTIL:Count(t, func)
   end
 
   return count
+end
+
+--- Returns true if any of the table's items resolves to true for the fiven function
+---@param t table
+---@param func function 
+---@return boolean 
+function GUTIL:Some(t, func)
+    return self:Count(t, func) > 0
 end
 
 function GUTIL:Sort(t, compFunc)
