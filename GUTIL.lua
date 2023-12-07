@@ -458,6 +458,22 @@ function GUTIL:Fold(t, foldFunction, startAtZero)
   return foldedValue
 end
 
+--- splits a table into two tables, elements that resolve into true for the given function will be put into the first table
+---@param t table
+---@param splitFunc function
+function GUTIL:Split(t, splitFunc)
+  local tableA = {}
+  local tableB = {}
+  for _, element in pairs(t) do
+    if splitFunc(element) then
+      table.insert(tableA, element)
+    else
+      table.insert(tableB, element)
+    end
+  end
+  return tableA, tableB
+end
+
 function GUTIL:IconToText(iconPath, height, width) 
   if not width then
       return "\124T" .. iconPath .. ":" .. height .. "\124t"
