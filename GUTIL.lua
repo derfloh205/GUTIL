@@ -332,6 +332,40 @@ function GUTIL:GetItemIDByLink(hyperlink)
   return tonumber(foundID)
 end
 
+--- returns an ItemLocationMixin if found in the players bags or optional also bank
+---@param itemID number
+---@param includeBank boolean?
+---@return ItemLocationMixin | nil itemLocation 
+function GUTIL:GetItemLocationFromItemID(itemID, includeBank)
+  includeBank = includeBank or false
+    local function FindBagAndSlot(itemID) 
+      for bag = 0, NUM_BAG_SLOTS do
+        for slot = 1, C_Container.GetContainerNumSlots(bag) do
+            local slotItemID = C_Container.GetContainerItemID(bag, slot)
+            if slotItemID == itemID then
+                return bag, slot
+            end
+        end
+      end
+      if includeBank then
+        for bag = NUM_BAG_SLOTS + 1, NUM_BAG_SLOTS + NUM_BANKBAGSLOTS do
+          for slot = 1, C_Container.GetContainerNumSlots(bag) do
+              local slotItemID = C_Container.GetContainerItemID(bag, slot)
+              if slotItemID == itemID then
+                  return bag, slot
+              end
+          end
+        end
+      end
+    end
+    local bag, slot = FindBagAndSlot(itemID)
+
+    if bag and slot then
+      return ItemLocation:CreateFromBagAndSlot(bag, slot)
+    end
+    return nil -- Return nil if not found
+end
+
 ---@param itemList ItemMixin[]
 ---@param callback function
 function GUTIL:ContinueOnAllItemsLoaded(itemList, callback) 
