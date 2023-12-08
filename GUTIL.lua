@@ -445,26 +445,18 @@ function GUTIL:Every(t, func)
   return self:Count(t, func) == tableCount
 end
 
+--- Variant of table.sort that does not sort it in place
+---comment
+---@param t table
+---@param compFunc function sort function (a, b)
+---@return table sorted sorted copy of given table
 function GUTIL:Sort(t, compFunc)
   local sorted = {}
-  for _, item in pairs(t) do
-      if sorted[1] == nil then
-          table.insert(sorted, item)
-      else
-          local inserted = false
-          for sortedIndex, sortedItem in pairs(sorted) do
-              if compFunc(item, sortedItem) then
-                  table.insert(sorted, sortedIndex, item)
-                  inserted = true
-                  break
-              end
-          end
-
-          if not inserted then
-              table.insert(sorted, item)
-          end
-      end
+  for _, e in pairs(t) do
+    table.insert(sorted, e)
   end
+
+  table.sort(sorted, compFunc) -- more performant but in place
 
   return sorted
 end
