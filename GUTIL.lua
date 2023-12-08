@@ -80,6 +80,10 @@ function GUTIL:GetQualityIDFromLink(itemLink)
     return tonumber(qualityID)
 end
 
+function GUTIL:StringStartsWith(mainString, prefix)
+  return string.sub(mainString, 1, #prefix) == prefix
+end
+
 function GUTIL:GetItemTooltipText(itemLink)
   local tooltipData = C_TooltipInfo.GetHyperlink(itemLink)
 
