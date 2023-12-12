@@ -146,6 +146,12 @@ end
 -- options: subTable, isTableList
 -- subTable: a subproperty that is a table that is to be mapped instead of the table itself
 -- isTableList: if the table only consists of other tables, map each subTable instead
+---@generic K
+---@generic V
+---@param t table<K, V>
+---@param mapFunc fun(value:V, key:K): table
+---@param options table?
+---@return table mappedTable
 function GUTIL:Map(t, mapFunc, options)
   options = options or {}
   local mapped = {}
