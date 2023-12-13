@@ -143,14 +143,16 @@ function GUTIL:ToSet(t)
   return set
 end
 
--- options: subTable, isTableList
--- subTable: a subproperty that is a table that is to be mapped instead of the table itself
--- isTableList: if the table only consists of other tables, map each subTable instead
+---@class GUTIL.MapOptions
+---@field subTable boolean a subproperty that is a table that is to be mapped instead of the table itself
+---@field isTableList boolean if the table only consists of other tables, map each subTable instead
+
+--- maps a table to another table by calling mapFunc for each element. If the mapFunc returns nil the element will be skipped
 ---@generic K
 ---@generic V
 ---@param t table<K, V>
----@param mapFunc fun(value:V, key:K): table
----@param options table?
+---@param mapFunc fun(value:V, key:K): any
+---@param options GUTIL.MapOptions?
 ---@return table mappedTable
 function GUTIL:Map(t, mapFunc, options)
   options = options or {}
