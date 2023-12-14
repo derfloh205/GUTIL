@@ -473,6 +473,11 @@ function GUTIL:Sort(t, compFunc)
   return sorted
 end
 
+---@generic K
+---@generic V
+---@param t table<K, V>
+---@param foldFunction fun(foldValue: any, nextElement: V): any
+---@param startAtZero boolean wether the table starts with index 0
 function GUTIL:Fold(t, foldFunction, startAtZero)
   local foldedValue = nil
   if #t < 2 and not startAtZero then
