@@ -473,6 +473,25 @@ function GUTIL:Sort(t, compFunc)
   return sorted
 end
 
+---Trims the table to a specific amount of elements.
+---@param t table<number, any>
+---@param amount number
+---@param front boolean? if true table will be trimmed from front, otherwise from back
+function GUTIL:TrimTable(t, amount, front)
+  if #t == 0 then
+    return t
+  end
+  if front then
+    while (#t > amount) do
+      table.remove(t, 1)
+    end
+  else
+    while (#t > amount) do
+      table.remove(t, #t)
+    end
+  end
+end
+
 ---@generic K
 ---@generic V
 ---@param t table<K, V>
