@@ -497,13 +497,6 @@ end
 ---@param versionB string
 ---@return number result 0 if same 1 if left is greater, -1 if left is smaller
 function GUTIL:CompareVersionStrings(versionA, versionB)
-  local function split(str, sep)
-      local sep, fields = sep or ".", {}
-      local pattern = string.format("([^%s]+)", sep)
-      str:gsub(pattern, function(c) fields[#fields + 1] = c end)
-      return fields
-  end
-
   local function compareSubversions(subversionA, subversionB)
       for i = 1, math.max(#subversionA, #subversionB) do
           local numA = tonumber(subversionA[i]) or 0
@@ -517,8 +510,8 @@ function GUTIL:CompareVersionStrings(versionA, versionB)
       return 0
   end
 
-  local subversionA = split(versionA)
-  local subversionB = split(versionB)
+  local subversionA = strsplit(versionA)
+  local subversionB = strsplit(versionB)
 
   local result = compareSubversions(subversionA, subversionB)
 
