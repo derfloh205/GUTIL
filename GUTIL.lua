@@ -492,6 +492,39 @@ function GUTIL:TrimTable(t, amount, front)
   end
 end
 
+--- compares versions like "7.8.10" and "10.8.9" (would say right is greater then left)
+---@param versionA string
+---@param versionB string
+---@return number result 0 if same 1 if left is greater, -1 if left is smaller
+function GUTIL:CompareVersionStrings(versionA, versionB)
+  local function split(str, sep)
+      local sep, fields = sep or ".", {}
+      local pattern = string.format("([^%s]+)", sep)
+      str:gsub(pattern, function(c) fields[#fields + 1] = c end)
+      return fields
+  end
+
+  local function compareSubversions(subversionA, subversionB)
+      for i = 1, math.max(#subversionA, #subversionB) do
+          local numA = tonumber(subversionA[i]) or 0
+          local numB = tonumber(subversionB[i]) or 0
+          if numA < numB then
+              return -1
+          elseif numA > numB then
+              return 1
+          end
+      end
+      return 0
+  end
+
+  local subversionA = split(versionA)
+  local subversionB = split(versionB)
+
+  local result = compareSubversions(subversionA, subversionB)
+
+  return result
+end
+
 ---@generic K
 ---@generic V
 ---@param t table<K, V>
