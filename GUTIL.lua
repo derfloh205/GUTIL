@@ -297,6 +297,7 @@ GUTIL.COLORS = {
   SILVER = "ffdadada",
   COPPER = "ffc9803c",
   PATREON = "ffff424D",
+  WHISPER = "ffff80ff"
 }
 
 function GUTIL:GetPercentRelativeTo(value, hundredPercentValue)
