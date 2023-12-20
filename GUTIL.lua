@@ -584,3 +584,20 @@ function GUTIL:ValidateNumberString(str, min, max, allowDecimals)
   end
   return true -- Valid number within range
 end
+
+---@param timestampHigher number unix seconds
+---@param timestampBLower number unix seconds
+---@return integer dayDiff
+function GUTIL:GetDaysBetweenTimestamps(timestampHigher, timestampBLower)
+        -- Calculate the difference in seconds
+        local differenceInSeconds = math.abs(timestampHigher - timestampBLower)
+
+        -- Convert seconds to days
+        local secondsInADay = 24 * 60 * 60 -- 24 hours * 60 minutes * 60 seconds
+        local differenceInDays = differenceInSeconds / secondsInADay
+
+        -- Round to the nearest whole number of days
+        differenceInDays = math.floor(differenceInDays + 0.5)
+
+        return differenceInDays
+end
