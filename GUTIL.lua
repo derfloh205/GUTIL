@@ -302,6 +302,14 @@ GUTIL.COLORS = {
   WHITE = "ffffffff",
 }
 
+function GUTIL:StripColor(text)
+    local text = text or ""
+    text = string.gsub( text, "|c%x%x%x%x%x%x%x%x", "" )
+    text = string.gsub( text, "|c%x%x %x%x%x%x%x", "" ) -- the trading parts colour has a space instead of a zero for some weird reason
+    text = string.gsub( text, "|r", "" )
+    return text
+end
+
 function GUTIL:GetPercentRelativeTo(value, hundredPercentValue)
   local oneP = hundredPercentValue / 100
       local percent = GUTIL:Round(value / oneP, 0)
