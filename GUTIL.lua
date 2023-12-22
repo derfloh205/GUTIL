@@ -282,6 +282,7 @@ function GUTIL:ColorizeText(text, color)
   return startLine .. color .. text .. endLine
 end
 
+---@enum GUTIL.COLORS
 GUTIL.COLORS = {
   GREEN = "ff00FF00",
   RED = "ffFF0000",
@@ -297,7 +298,8 @@ GUTIL.COLORS = {
   SILVER = "ffdadada",
   COPPER = "ffc9803c",
   PATREON = "ffff424D",
-  WHISPER = "ffff80ff"
+  WHISPER = "ffff80ff",
+  WHITE = "ffffffff",
 }
 
 function GUTIL:GetPercentRelativeTo(value, hundredPercentValue)
