@@ -302,6 +302,7 @@ GUTIL.COLORS = {
   WHITE = "ffffffff",
 }
 
+-- Thanks to arkinventory
 function GUTIL:StripColor(text)
     local text = text or ""
     text = string.gsub( text, "|c%x%x%x%x%x%x%x%x", "" )
