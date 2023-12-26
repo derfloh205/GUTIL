@@ -612,3 +612,52 @@ function GUTIL:GetDaysBetweenTimestamps(timestampHigher, timestampBLower)
 
         return differenceInDays
 end
+
+--- spreads the iteration (unsorted random) of a given function over multiple frames (one frame per iteration) to reduce game lag for heavy processing.
+--- Use the finallyCallback to continue after the iteration ends
+---@async
+---@generic K
+---@generic V
+---@param t table<K, V> the table to be iterated on
+---@param iterationFunction fun(key:K, value:V) called for each iteration of the given table
+---@param finallyCallback? function called after the iteration ends
+---@param conditionalCallback? fun(key:K, value:V):boolean called before each iteration. If false, stops the iteration. Can be used to cancel or end the iteration early
+---@param maxIterations? integer maximum number of iterations. Default is nil meaning no maximum
+---@param maxSeconds? number maximum time in seconds after the iteration is canceled
+function GUTIL:FrameDistributedIteration(t, iterationFunction, finallyCallback, conditionalCallback, maxIterations, maxSeconds)
+  
+  --- map the keys of the table to indexes
+  local indexedTable = {}
+  for key, _ in pairs(t) do
+    table.insert(indexedTable, key)
+  end
+  local iterationIndex = 1
+  local startMS = debugprofilestop()
+  local function iterate()
+    local currentIterationKey = indexedTable[iterationIndex]
+    local currentTableValue = t[currentIterationKey]
+
+    if not conditionalCallback or (conditionalCallback and conditionalCallback(currentIterationKey, currentTableValue)) then
+      iterationFunction(currentIterationKey, currentTableValue)
+      iterationIndex = iterationIndex + 1
+      local elapsedMS = debugprofilestop() - startMS
+      local secondsReached = maxSeconds and ((maxSeconds / 1000) <= elapsedMS)
+      local iterationsReached = iterationIndex > maxIterations
+      local noMoreElements = not indexedTable[iterationIndex]
+      if noMoreElements or iterationsReached or secondsReached then
+         if finallyCallback then
+          finallyCallback()
+          return
+         end
+        
+      elseif finallyCallback then
+        RunNextFrame(iterate)
+      end
+    end
+    if finallyCallback then
+      finallyCallback() -- called if conditionalFunction exists and returns false
+    end
+  end
+
+  iterate()
+end
