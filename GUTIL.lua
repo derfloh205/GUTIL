@@ -619,7 +619,7 @@ end
 ---@generic K
 ---@generic V
 ---@param t table<K, V> the table to be iterated on
----@param iterationFunction fun(key:K, value:V):boolean|nil called for each iteration of the given table, if the function returns false iteration will be stopped
+---@param iterationFunction fun(key:K, value:V, counter:number):boolean|nil called for each iteration of the given table, if the function returns false iteration will be stopped
 ---@param finallyCallback? function called after the iteration ends
 ---@param maxIterations? integer maximum number of iterations. Default is nil meaning no maximum
 ---@param maxMS? number maximum time in ms after the iteration is canceled
@@ -641,7 +641,7 @@ function GUTIL:FrameDistributedIteration(t, iterationFunction, finallyCallback, 
       return
     end
 
-    local result = iterationFunction(currentIterationKey, currentTableValue)
+    local result = iterationFunction(currentIterationKey, currentTableValue, iterationCounter)
     local stopIteration = result ~= nil and result == false
     iterationCounter = iterationCounter + 1
     local elapsedMS = (GetTime() * 1000) - startMS
