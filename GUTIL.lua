@@ -650,15 +650,11 @@ function GUTIL:FrameDistributedIteration(t, iterationFunction, finallyCallback, 
 
     if stopIteration or iterationsReached or secondsReached then
         if finallyCallback then
-        finallyCallback()
-      end
-      return
+          finallyCallback()
+        end
+        return
     else
       RunNextFrame(iterate)
-    end
-
-    if finallyCallback then
-      finallyCallback() -- called if conditionalFunction exists and returns false
     end
   end
 
