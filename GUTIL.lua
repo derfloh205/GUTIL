@@ -645,7 +645,6 @@ function GUTIL:FrameDistributedIteration(t, iterationFunction, finallyCallback, 
     local stopIteration = result ~= nil and result == false
     iterationCounter = iterationCounter + 1
     local elapsedMS = (GetTime() * 1000) - startMS
-    print("elapsedMS: " .. tostring(elapsedMS))
     local secondsReached = maxMS and (maxMS <= elapsedMS)
     local iterationsReached = iterationCounter > maxIterations
 
