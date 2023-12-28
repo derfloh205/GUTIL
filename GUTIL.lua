@@ -619,41 +619,44 @@ end
 ---@generic K
 ---@generic V
 ---@param t table<K, V> the table to be iterated on
----@param iterationFunction fun(key:K, value:V) called for each iteration of the given table
+---@param iterationFunction fun(key:K, value:V):boolean|nil called for each iteration of the given table, if the function returns false iteration will be stopped
 ---@param finallyCallback? function called after the iteration ends
----@param conditionalCallback? fun(key:K, value:V):boolean called before each iteration. If false, stops the iteration. Can be used to cancel or end the iteration early
 ---@param maxIterations? integer maximum number of iterations. Default is nil meaning no maximum
----@param maxSeconds? number maximum time in seconds after the iteration is canceled
-function GUTIL:FrameDistributedIteration(t, iterationFunction, finallyCallback, conditionalCallback, maxIterations, maxSeconds)
+---@param maxMS? number maximum time in ms after the iteration is canceled
+function GUTIL:FrameDistributedIteration(t, iterationFunction, finallyCallback, maxIterations, maxMS)
   
   --- map the keys of the table to indexes
-  local indexedTable = {}
-  for key, _ in pairs(t) do
-    table.insert(indexedTable, key)
-  end
-  local iterationIndex = 1
-  local startMS = debugprofilestop()
+  local iterationCounter = 1
+  local startMS = GetTime()
+  local currentIterationKey = nil
+  local currentTableValue = nil
   local function iterate()
-    local currentIterationKey = indexedTable[iterationIndex]
-    local currentTableValue = t[currentIterationKey]
+    currentIterationKey, currentTableValue = next(t, currentIterationKey)
 
-    if not conditionalCallback or (conditionalCallback and conditionalCallback(currentIterationKey, currentTableValue)) then
-      iterationFunction(currentIterationKey, currentTableValue)
-      iterationIndex = iterationIndex + 1
-      local elapsedMS = debugprofilestop() - startMS
-      local secondsReached = maxSeconds and ((maxSeconds / 1000) <= elapsedMS)
-      local iterationsReached = iterationIndex > maxIterations
-      local noMoreElements = not indexedTable[iterationIndex]
-      if noMoreElements or iterationsReached or secondsReached then
-         if finallyCallback then
-          finallyCallback()
-          return
-         end
-        
-      elseif finallyCallback then
-        RunNextFrame(iterate)
+    if not currentIterationKey then
+      -- no more elements - end iterations
+      if finallyCallback then
+        finallyCallback()
       end
+      return
     end
+
+    local result = iterationFunction(currentIterationKey, currentTableValue)
+    local stopIteration = result ~= nil and result == false
+    iterationCounter = iterationCounter + 1
+    local elapsedMS = GetTime() - startMS
+    local secondsReached = maxMS and (maxMS <= elapsedMS)
+    local iterationsReached = iterationCounter > maxIterations
+
+    if stopIteration or iterationsReached or secondsReached then
+        if finallyCallback then
+        finallyCallback()
+      end
+      return
+    else
+      RunNextFrame(iterate)
+    end
+
     if finallyCallback then
       finallyCallback() -- called if conditionalFunction exists and returns false
     end
