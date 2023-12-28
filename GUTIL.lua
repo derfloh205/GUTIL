@@ -627,7 +627,7 @@ function GUTIL:FrameDistributedIteration(t, iterationFunction, finallyCallback, 
   
   --- map the keys of the table to indexes
   local iterationCounter = 1
-  local startMS = GetTime()
+  local startMS = GetTime() / 1000
   local currentIterationKey = nil
   local currentTableValue = nil
   local function iterate()
@@ -644,8 +644,7 @@ function GUTIL:FrameDistributedIteration(t, iterationFunction, finallyCallback, 
     local result = iterationFunction(currentIterationKey, currentTableValue)
     local stopIteration = result ~= nil and result == false
     iterationCounter = iterationCounter + 1
-    local elapsedMS = GetTime() - startMS
-    print("elapsedMS: " .. tostring(elapsedMS))
+    local elapsedMS = (GetTime() / 1000) - startMS
     local secondsReached = maxMS and (maxMS <= elapsedMS)
     local iterationsReached = iterationCounter > maxIterations
 
