@@ -1,8 +1,9 @@
 
 
 
----@class GUTIL
-local GUTIL = LibStub:NewLibrary("GUTIL", 1) or LibStub:GetLibrary("GUTIL")
+---@class GUTIL-2.0
+local GUTIL = LibStub:NewLibrary("GUTIL-2.0", 1)
+if not GUTIL then return end
 
 --- CLASSICS insert
 local Object = {}
