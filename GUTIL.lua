@@ -197,6 +197,11 @@ function GUTIL:Map(t, mapFunc, options)
   end
 end
 
+---@generic K
+---@generic V
+---@param t table<K, V>
+---@param filterFunc fun(value: V): boolean
+---@return table<number, V>
 function GUTIL:Filter(t, filterFunc)
   local filtered = {}
   for k, v in pairs(t) do
