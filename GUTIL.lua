@@ -267,15 +267,15 @@ end
 ---@return number?
 ---@return number?
 function GUTIL:GetMoneyValuesFromCopper(copperValue, formatString)
-    local gold = GUTIL:Round(copperValue/10000)
-    local silver = GUTIL:Round(copperValue/100000)
-    local copper = GUTIL:Round(copperValue/10000000)
+  local gold = math.floor(copperValue / 10000)
+  local silver = math.floor(copperValue % 10000 / 100)
+  local copper = math.floor(copperValue % 100)
 
-    if not formatString then
-        return tonumber(gold) or 0, tonumber(silver) or 0, tonumber(copper) or 0
-    else
-        return gold .. "g " .. silver .. "s " .. copper .. "c"
-    end
+  if not formatString then
+    return gold, silver, copper
+  else
+    return gold .. "g " .. silver .. "s " .. copper .. "c"
+  end
 end
 
 ---Colorizes a Text based on a color in GUTIL.COLORS (hex with alpha prefix)
