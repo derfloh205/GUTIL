@@ -2,7 +2,7 @@
 
 
 ---@class GUTIL-2.0
-local GUTIL = LibStub:NewLibrary("GUTIL-2.0", 1)
+local GUTIL = LibStub:NewLibrary("GUTIL-2.0", 2)
 if not GUTIL then return end
 
 --- CLASSICS insert
@@ -329,9 +329,10 @@ end
 
 --- formats the given copper value as gold, silver and copper display with icons
 ---@param copperValue number
----@param useColor boolean -- colors the numbers green if positive and red if negative
+---@param useColor? boolean -- colors the numbers green if positive and red if negative
 ---@param percentRelativeTo number? if included: will be treated as 100% and a % value in relation to the coppervalue will be added
-function GUTIL:FormatMoney(copperValue, useColor, percentRelativeTo)
+---@param separateThousands? boolean
+function GUTIL:FormatMoney(copperValue, useColor, percentRelativeTo, separateThousands)
   local absValue = abs(copperValue)
   local minusText = ""
   local color = GUTIL.COLORS.GREEN
@@ -347,9 +348,9 @@ function GUTIL:FormatMoney(copperValue, useColor, percentRelativeTo)
   end
 
   if useColor then
-      return GUTIL:ColorizeText(minusText .. GetCoinTextureString(absValue, 10) .. percentageText, color)
+      return GUTIL:ColorizeText(minusText .. GetMoneyString(absValue, separateThousands) .. percentageText, color)
   else
-      return minusText .. GetCoinTextureString(absValue, 10) .. percentageText
+      return minusText .. GetMoneyString(absValue, separateThousands) .. percentageText
   end
 end
 
