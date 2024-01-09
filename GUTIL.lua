@@ -151,10 +151,11 @@ end
 --- maps a table to another table by calling mapFunc for each element. If the mapFunc returns nil the element will be skipped
 ---@generic K
 ---@generic V
+---@generic R
 ---@param t table<K, V>
----@param mapFunc fun(value:V, key:K): any
+---@param mapFunc fun(value:V, key:K): R
 ---@param options GUTIL.MapOptions?
----@return table mappedTable
+---@return R[]
 function GUTIL:Map(t, mapFunc, options)
   options = options or {}
   local mapped = {}
@@ -511,8 +512,10 @@ function GUTIL:GetQualityIconString(qualityID, sizeX, sizeY, offsetX, offsetY)
 end
 
 --- Counts the number of items that return true for the given function
----@param t table
----@param func function
+---@generic K
+---@generic V
+---@param t table<K, V>
+---@param func fun(value: V): boolean
 ---@return number count
 function GUTIL:Count(t, func)
   local count = 0
