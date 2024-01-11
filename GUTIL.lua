@@ -107,10 +107,12 @@ function GUTIL:GetItemTooltipText(itemLink)
 end
 
 ---Finds the first element in the table where findFunc(element) returns true
----@param t any
----@param findFunc any
----@return any? element
----@return any? key
+---@generic K
+---@generic V
+---@param t table<K, V>
+---@param findFunc fun(value: V): boolean
+---@return V? element
+---@return K? key
 function GUTIL:Find(t, findFunc)
   for k, v in pairs(t) do
       if findFunc(v) then
@@ -532,8 +534,10 @@ function GUTIL:Count(t, func)
 end
 
 --- Returns true if any of the table's items resolves to true for the given function
----@param t table
----@param func function 
+---@generic K
+---@generic V
+---@param t table<K, V>
+---@param func fun(value: V): boolean
 ---@return boolean 
 function GUTIL:Some(t, func)
     return self:Count(t, func) > 0
