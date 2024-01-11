@@ -2,7 +2,7 @@
 
 
 ---@class GUTIL-2.0
-local GUTIL = LibStub:NewLibrary("GUTIL-2.0", 3)
+local GUTIL = LibStub:NewLibrary("GUTIL-2.0", 4)
 if not GUTIL then return end
 
 --- CLASSICS insert
@@ -402,6 +402,7 @@ end
 ---@param percentRelativeTo number? if included: will be treated as 100% and a % value in relation to the coppervalue will be added
 ---@param separateThousands? boolean
 function GUTIL:FormatMoney(copperValue, useColor, percentRelativeTo, separateThousands)
+  copperValue = GUTIL:Round(copperValue) -- there is no such thing as decimal coppers (we no fuel station here)
   local absValue = abs(copperValue)
   local minusText = ""
   local color = GUTIL.COLORS.GREEN
