@@ -127,6 +127,10 @@ function GUTIL:Concat(tableList)
   return finalList
 end
 
+---makes a table unique
+---@generic V
+---@param t V[]
+---@return V[]
 function GUTIL:ToSet(t)
   local set = {}
 
