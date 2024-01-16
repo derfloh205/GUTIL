@@ -487,6 +487,21 @@ function GUTIL:ContinueOnAllItemsLoaded(itemList, callback)
   end
 end
 
+---@param conditionCallback fun(): boolean
+---@param callback function will be executed as soon as the condition is fulfilled
+---@param checkInterval number? Seconds - Default: 0 (once per frame).
+function GUTIL:WaitFor(conditionCallback, callback, checkInterval)
+  local function checkCondition()
+    if conditionCallback() then
+      callback()
+    else
+      C_Timer.After(checkInterval or 0, checkCondition)
+    end
+  end
+
+  checkCondition()
+end
+
 function GUTIL:EquipItemByLink(link)
   for bag = BANK_CONTAINER, NUM_BAG_SLOTS + NUM_BANKBAGSLOTS do
     for slot = 1, C_Container.GetContainerNumSlots(bag) do
