@@ -1,5 +1,5 @@
 ---@class GUTIL-2.0
-local GUTIL = LibStub:NewLibrary("GUTIL-2.0", 4)
+local GUTIL = LibStub:NewLibrary("GUTIL-2.0", 5)
 if not GUTIL then return end
 
 --- CLASSICS insert
@@ -116,7 +116,10 @@ function GUTIL:Find(t, findFunc)
   return nil
 end
 
--- to concat lists together (behaviour unpredictable with tables that have strings or not ordered numbers as indices)
+--- to concat lists together (behaviour unpredictable with tables that have strings or not ordered numbers as indices)
+---@generic V
+---@param tableList table<number, V[]>
+---@return V[]
 function GUTIL:Concat(tableList)
   local finalList = {}
   for _, currentTable in pairs(tableList) do
@@ -130,13 +133,24 @@ end
 ---makes a table unique
 ---@generic V
 ---@param t V[]
+---@param compareFunc? fun(element: V): any return a value with that the elements should be compared with
 ---@return V[]
-function GUTIL:ToSet(t)
+function GUTIL:ToSet(t, compareFunc)
   local set = {}
 
-  for k, v in pairs(t) do
-    if not tContains(set, v) then
-      table.insert(set, v)
+  if not compareFunc then
+    for _, element in pairs(t) do
+      if not tContains(set, element) then
+        table.insert(set, element)
+      end
+    end
+  else
+    for _, element in pairs(t) do
+      if not GUTIL:Some(set, function(setElement)
+            return compareFunc(element) == compareFunc(setElement)
+          end) then
+        table.insert(set, element)
+      end
     end
   end
 
