@@ -569,8 +569,9 @@ function GUTIL:Some(t, func)
 end
 
 --- Returns true if all of the table's items resolve to true for the given function
----@param t table
----@param func function
+---@generic V
+---@param t V[]
+---@param func fun(element: V):boolean
 ---@return boolean
 function GUTIL:Every(t, func)
   local tableCount = self:Count(t)
