@@ -133,23 +133,25 @@ end
 ---makes a table unique
 ---@generic V
 ---@param t V[]
----@param compareFunc? fun(element: V): any return a value with that the elements should be compared with
+---@param compareFunc? fun(element: V): any return a value with that the elements should be compared with in uniqueness
 ---@return V[]
 function GUTIL:ToSet(t, compareFunc)
   local set = {}
+  local containedMap = {} -- to speed things up
 
   if not compareFunc then
     for _, element in pairs(t) do
-      if not tContains(set, element) then
+      if not containedMap[element] then
         table.insert(set, element)
+        containedMap[element] = true
       end
     end
   else
     for _, element in pairs(t) do
-      if not GUTIL:Some(set, function(setElement)
-            return compareFunc(element) == compareFunc(setElement)
-          end) then
+      local uniqueValue = compareFunc(element)
+      if not containedMap[uniqueValue] then
         table.insert(set, element)
+        containedMap[uniqueValue] = true
       end
     end
   end
