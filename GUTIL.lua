@@ -1,5 +1,5 @@
 ---@class GUTIL-2.0
-local GUTIL = LibStub:NewLibrary("GUTIL-2.0", 6)
+local GUTIL = LibStub:NewLibrary("GUTIL-2.0", 7)
 if not GUTIL then return end
 
 --- CLASSICS insert
@@ -504,8 +504,15 @@ end
 ---@param conditionCallback fun(): boolean
 ---@param callback function will be executed as soon as the condition is fulfilled
 ---@param checkInterval number? Seconds - Default: 0 (once per frame).
-function GUTIL:WaitFor(conditionCallback, callback, checkInterval)
+---@param maxWaitSeconds number? Maximum Seconds to wait, default: 10. No callback called when timeout triggered
+function GUTIL:WaitFor(conditionCallback, callback, checkInterval, maxWaitSeconds)
+  maxWaitSeconds = maxWaitSeconds or 10
+  local startTime = GetTimePreciseSec()
   local function checkCondition()
+    local secondsElapsed = GetTimePreciseSec() - startTime
+    if secondsElapsed >= maxWaitSeconds then
+      return
+    end
     if conditionCallback() then
       callback()
     else
