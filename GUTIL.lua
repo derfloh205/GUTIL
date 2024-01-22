@@ -523,6 +523,21 @@ function GUTIL:WaitFor(conditionCallback, callback, checkInterval, maxWaitSecond
   checkCondition()
 end
 
+---@param event WowEvent
+---@param callback function
+---@param maxWaitSeconds number?
+function GUTIL:WaitForEvent(event, callback, maxWaitSeconds)
+  local owner = tostring(GetTimePreciseSec()) -- unique owner
+  EventRegistry:RegisterFrameEventAndCallback(event, function(ownerID, ...)
+    EventRegistry:UnregisterCallback(event, owner)
+    callback(...)
+  end)
+
+  if maxWaitSeconds then
+    EventRegistry:UnregisterCallback(event, owner)
+  end
+end
+
 function GUTIL:EquipItemByLink(link)
   for bag = BANK_CONTAINER, NUM_BAG_SLOTS + NUM_BANKBAGSLOTS do
     for slot = 1, C_Container.GetContainerNumSlots(bag) do
