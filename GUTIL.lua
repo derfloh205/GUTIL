@@ -1,5 +1,5 @@
 ---@class GUTIL-2.0
-local GUTIL = LibStub:NewLibrary("GUTIL-2.0", 7)
+local GUTIL = LibStub:NewLibrary("GUTIL-2.0", 8)
 if not GUTIL then return end
 
 --- CLASSICS insert
@@ -529,14 +529,24 @@ end
 ---@param callback function
 ---@param maxWaitSeconds number?
 function GUTIL:WaitForEvent(event, callback, maxWaitSeconds)
-  local owner = tostring(GetTimePreciseSec()) -- unique owner
-  EventRegistry:RegisterFrameEventAndCallback(event, function(ownerID, ...)
-    EventRegistry:UnregisterCallback(event, owner)
+  local frame = CreateFrame("frame")
+  frame:RegisterEvent(event)
+
+  local unregistered = false
+  local function unregister()
+    if unregistered then return end
+    unregistered = true
+    frame:UnregisterEvent(event)
+    frame:SetScript("OnEvent", nil)
+  end
+
+  frame:SetScript("OnEvent", function(_, ...)
     callback(...)
+    unregister()
   end)
 
   if maxWaitSeconds then
-    EventRegistry:UnregisterCallback(event, owner)
+    C_Timer.After(maxWaitSeconds, unregister)
   end
 end
 
