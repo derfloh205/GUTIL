@@ -676,29 +676,15 @@ end
 ---@generic K
 ---@generic V
 ---@param t table<K, V>
----@param foldFunction fun(foldValue: any, nextElement: V): any
----@param startAtZero boolean wether the table starts with index 0
-function GUTIL:Fold(t, foldFunction, startAtZero)
-  local foldedValue = nil
-  if #t < 2 and not startAtZero then
-    return t[1]
-  elseif #t < 1 and startAtZero then
-    return t[0]
+---@param initialValue any
+---@param foldFunction fun(foldValue: any, nextElement: V, key: K): any
+function GUTIL:Fold(t, initialValue, foldFunction)
+  local accumulator = initialValue
+  for key, value in pairs(t) do
+    accumulator = foldFunction(accumulator, value, key)
   end
 
-  local startIndex = 1
-  if startAtZero then
-    startIndex = 0
-  end
-  for index = startIndex, #t, 1 do
-    if foldedValue == nil then
-      foldedValue = foldFunction(t[startIndex], t[startIndex + 1])
-    elseif index < #t then
-      foldedValue = foldFunction(foldedValue, t[index + 1])
-    end
-  end
-
-  return foldedValue
+  return accumulator
 end
 
 --- splits a table into two tables, elements that resolve into true for the given function will be put into the first table
