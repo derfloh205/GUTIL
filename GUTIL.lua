@@ -577,7 +577,7 @@ end
 ---@generic K
 ---@generic V
 ---@param t table<K, V>
----@param func fun(value: V): boolean
+---@param func? fun(value: V): boolean
 ---@return number count
 function GUTIL:Count(t, func)
   local count = 0
