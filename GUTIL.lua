@@ -1,5 +1,5 @@
 ---@class GUTIL-2.0
-local GUTIL = LibStub:NewLibrary("GUTIL-2.0", 8)
+local GUTIL = LibStub:NewLibrary("GUTIL-2.0", 9)
 if not GUTIL then return end
 
 --- CLASSICS insert
@@ -291,6 +291,77 @@ function GUTIL:GetMoneyValuesFromCopper(copperValue, formatString)
   else
     return gold .. "g " .. silver .. "s " .. copper .. "c"
   end
+end
+
+--- returns a table with quick format functions to save visual coding space
+---@return GUTIL.Formatter f
+function GUTIL:GetFormatter()
+  local b = GUTIL.COLORS.DARK_BLUE
+  local bb = GUTIL.COLORS.BRIGHT_BLUE
+  local g = GUTIL.COLORS.GREEN
+  local grey = GUTIL.COLORS.GREY
+  local r = GUTIL.COLORS.RED
+  local l = GUTIL.COLORS.LEGENDARY
+  local e = GUTIL.COLORS.EPIC
+  local patreon = GUTIL.COLORS.PATREON
+  local whisper = GUTIL.COLORS.WHISPER
+  local white = GUTIL.COLORS.WHITE
+  local c = function(text, color)
+    return GUTIL:ColorizeText(text, color)
+  end
+  local p = GUTIL:GetQualityIconString(1, 15, 15) .. " "
+  local s = GUTIL:GetQualityIconString(2, 15, 15) .. " "
+  local P = GUTIL:GetQualityIconString(3, 15, 15) .. " "
+  local a = "     "
+
+  ---@class GUTIL.Formatter
+  local formatter = {}
+  formatter.b = function(text)
+    return c(text, b)
+  end
+  formatter.bb = function(text)
+    return c(text, bb)
+  end
+  formatter.g = function(text)
+    return c(text, g)
+  end
+  formatter.r = function(text)
+    return c(text, r)
+  end
+  formatter.l = function(text)
+    return c(text, l)
+  end
+  formatter.e = function(text)
+    return c(text, e)
+  end
+  formatter.grey = function(text)
+    return c(text, grey)
+  end
+  formatter.patreon = function(text)
+    return c(text, patreon)
+  end
+  formatter.whisper = function(text)
+    return c(text, whisper)
+  end
+  formatter.white = function(text)
+    return c(text, white)
+  end
+  formatter.p = p
+  formatter.s = s
+  formatter.P = P
+  formatter.a = a
+  formatter.m = function(m)
+    return GUTIL:FormatMoney(m, true)
+  end
+  formatter.mw = function(m)
+    return GUTIL:FormatMoney(m)
+  end
+
+  formatter.i = function(i, h, w)
+    return GUTIL:IconToText(i, h, w)
+  end
+
+  return formatter
 end
 
 ---Colorizes a Text based on a color in GUTIL.COLORS (hex with alpha prefix)
