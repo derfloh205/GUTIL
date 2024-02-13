@@ -685,9 +685,10 @@ end
 
 --- Variant of table.sort that does not sort it in place
 ---comment
----@param t table
----@param compFunc function sort function (a, b)
----@return table sorted sorted copy of given table
+---@generic V
+---@param t V[]
+---@param compFunc fun(a: V, b: V):boolean true: A > B - false: A <= B
+---@return V[] sorted sorted copy of given table
 function GUTIL:Sort(t, compFunc)
   local sorted = {}
   for _, e in pairs(t) do
@@ -759,8 +760,11 @@ function GUTIL:Fold(t, initialValue, foldFunction)
 end
 
 --- splits a table into two tables, elements that resolve into true for the given function will be put into the first table
----@param t table
----@param splitFunc function
+---@generic V
+---@param t V[]
+---@param splitFunc fun(v: V):boolean
+---@return V[] filtered
+---@return V[] rest
 function GUTIL:Split(t, splitFunc)
   local tableA = {}
   local tableB = {}
