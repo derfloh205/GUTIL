@@ -1,5 +1,5 @@
 ---@class GUTIL-2.0
-local GUTIL = LibStub:NewLibrary("GUTIL-2.0", 9)
+local GUTIL = LibStub:NewLibrary("GUTIL-2.0", 10)
 if not GUTIL then return end
 
 --- CLASSICS insert
@@ -352,6 +352,9 @@ function GUTIL:GetFormatter()
   formatter.a = a
   formatter.m = function(m)
     return GUTIL:FormatMoney(m, true)
+  end
+  formatter.mr = function(m, r)
+    return GUTIL:FormatMoney(m, true, r)
   end
   formatter.mw = function(m)
     return GUTIL:FormatMoney(m)
