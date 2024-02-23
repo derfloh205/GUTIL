@@ -1,5 +1,5 @@
 ---@class GUTIL-2.0
-local GUTIL = LibStub:NewLibrary("GUTIL-2.0", 10)
+local GUTIL = LibStub:NewLibrary("GUTIL-2.0", 11)
 if not GUTIL then return end
 
 --- CLASSICS insert
@@ -362,6 +362,13 @@ function GUTIL:GetFormatter()
 
   formatter.i = function(i, h, w)
     return GUTIL:IconToText(i, h, w)
+  end
+
+  formatter.class = function(t, class)
+    if not class then
+      return t
+    end
+    return C_ClassColor.GetClassColor(class):WrapTextInColorCode(t)
   end
 
   return formatter
