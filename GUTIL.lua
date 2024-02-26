@@ -1,5 +1,5 @@
 ---@class GUTIL-2.0
-local GUTIL = LibStub:NewLibrary("GUTIL-2.0", 11)
+local GUTIL = LibStub:NewLibrary("GUTIL-2.0", 12)
 if not GUTIL then return end
 
 --- CLASSICS insert
@@ -606,28 +606,70 @@ function GUTIL:WaitFor(conditionCallback, callback, checkInterval, maxWaitSecond
   checkCondition()
 end
 
+GUTIL.eventWaitFrame = nil
+
+local function initEventWaitFrame()
+  GUTIL.eventWaitFrame = CreateFrame("frame")
+
+  ---@type table<WowEvent, function[]>
+  GUTIL.eventWaitFrame.callbackMap = {}
+
+  function GUTIL.eventWaitFrame:UnregisterCallback(event, callback)
+    if GUTIL.eventWaitFrame.callbackMap[event] then
+      local _, index = GUTIL:Find(GUTIL.eventWaitFrame.callbackMap[event], function(fun)
+        return fun == callback
+      end)
+      if index then
+        tremove(GUTIL.eventWaitFrame.callbackMap[event], index)
+      end
+    end
+
+    if GUTIL.eventWaitFrame.callbackMap[event] and GUTIL:Count(GUTIL.eventWaitFrame.callbackMap[event]) == 0 then
+      GUTIL.eventWaitFrame.callbackMap[event] = nil
+      GUTIL.eventWaitFrame:UnregisterEvent(event)
+    end
+  end
+
+  ---@param event WowEvent
+  ---@param callback function
+  function GUTIL.eventWaitFrame:RegisterCallback(event, callback)
+    if not GUTIL.eventWaitFrame.callbackMap[event] then
+      GUTIL.eventWaitFrame.callbackMap[event] = { callback }
+      GUTIL.eventWaitFrame:RegisterEvent(event)
+    else
+      if not tContains(GUTIL.eventWaitFrame.callbackMap[event], callback) then
+        tinsert(GUTIL.eventWaitFrame.callbackMap[event], callback)
+      end
+    end
+  end
+
+  GUTIL.eventWaitFrame:SetScript("OnEvent", function(event, ...)
+    if not GUTIL.eventWaitFrame.callbackMap[event] then return end
+    local callbacks = GUTIL.eventWaitFrame.callbackMap[event]
+    for _, callback in ipairs(callbacks) do
+      xpcall(callback, function()
+        print(debugstack("Error in Callback for GUTIL:WaitForEvent"))
+      end, ...)
+    end
+    GUTIL.eventWaitFrame.callbackMap[event] = nil
+    GUTIL.eventWaitFrame:UnregisterEvent(event)
+  end)
+
+  return GUTIL.eventWaitFrame
+end
+
 ---@param event WowEvent
 ---@param callback function
 ---@param maxWaitSeconds number?
 function GUTIL:WaitForEvent(event, callback, maxWaitSeconds)
-  local frame = CreateFrame("frame")
-  frame:RegisterEvent(event)
+  GUTIL.eventWaitFrame = GUTIL.eventWaitFrame or initEventWaitFrame()
 
-  local unregistered = false
-  local function unregister()
-    if unregistered then return end
-    unregistered = true
-    frame:UnregisterEvent(event)
-    frame:SetScript("OnEvent", nil)
-  end
-
-  frame:SetScript("OnEvent", function(_, ...)
-    callback(...)
-    unregister()
-  end)
+  GUTIL.eventWaitFrame:RegisterCallback(event, callback)
 
   if maxWaitSeconds then
-    C_Timer.After(maxWaitSeconds, unregister)
+    C_Timer.After(maxWaitSeconds, function()
+      GUTIL.eventWaitFrame:UnregisterCallback(event, callback)
+    end)
   end
 end
 
