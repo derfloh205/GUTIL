@@ -1,5 +1,5 @@
 ---@class GUTIL-2.0
-local GUTIL = LibStub:NewLibrary("GUTIL-2.0", 12)
+local GUTIL = LibStub:NewLibrary("GUTIL-2.0", 13)
 if not GUTIL then return end
 
 --- CLASSICS insert
@@ -293,9 +293,13 @@ function GUTIL:GetMoneyValuesFromCopper(copperValue, formatString)
   end
 end
 
+--- Singleton
+---@type GUTIL.Formatter
+local _formatter = nil
 --- returns a table with quick format functions to save visual coding space
 ---@return GUTIL.Formatter f
 function GUTIL:GetFormatter()
+  if _formatter then return _formatter end
   local b = GUTIL.COLORS.DARK_BLUE
   local bb = GUTIL.COLORS.BRIGHT_BLUE
   local g = GUTIL.COLORS.GREEN
@@ -370,6 +374,8 @@ function GUTIL:GetFormatter()
     end
     return C_ClassColor.GetClassColor(class):WrapTextInColorCode(t)
   end
+
+  _formatter = formatter
 
   return formatter
 end
