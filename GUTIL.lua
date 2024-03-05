@@ -1,5 +1,5 @@
 ---@class GUTIL-2.0
-local GUTIL = LibStub:NewLibrary("GUTIL-2.0", 13)
+local GUTIL = LibStub:NewLibrary("GUTIL-2.0", 14)
 if not GUTIL then return end
 
 --- CLASSICS insert
@@ -295,11 +295,11 @@ end
 
 --- Singleton
 ---@type GUTIL.Formatter
-local _formatter = nil
+GUTIL.Formatter = nil
 --- returns a table with quick format functions to save visual coding space
 ---@return GUTIL.Formatter f
 function GUTIL:GetFormatter()
-  if _formatter then return _formatter end
+  if GUTIL.Formatter then return GUTIL.Formatter end
   local b = GUTIL.COLORS.DARK_BLUE
   local bb = GUTIL.COLORS.BRIGHT_BLUE
   local g = GUTIL.COLORS.GREEN
@@ -375,7 +375,7 @@ function GUTIL:GetFormatter()
     return C_ClassColor.GetClassColor(class):WrapTextInColorCode(t)
   end
 
-  _formatter = formatter
+  GUTIL.Formatter = formatter
 
   return formatter
 end
