@@ -903,8 +903,8 @@ function GUTIL:TooltipContains(options)
     end
 
     for lineIndex = 1, lineIterationCap do
-        local lineLeft = _G[tooltip:GetName() .. 'TextLeft' .. lineIndex];
-        local lineRight = _G[tooltip:GetName() .. 'TextRight' .. lineIndex];
+        local lineLeft = _G[tooltip:GetName() .. 'TextLeft' .. lineIndex] --[[@as FontString?]]
+        local lineRight = _G[tooltip:GetName() .. 'TextRight' .. lineIndex] --[[@as FontString?]]
 
         if not lineLeft and not lineRight then
             return false
@@ -927,4 +927,37 @@ function GUTIL:TooltipContains(options)
     end
 
     return false
+end
+
+---@class GUTIL.TooltipUpdateDoubleLineOptions
+---@field tooltipFrame GameTooltip? default: global GameTooltip
+---@field textLeft? string the string to search for in the left text of the double line
+---@field updateLine? fun(leftLine: FontString, rightLine: FontString?)
+---@field lineIterationCap? number default: 200
+
+---@param options GUTIL.TooltipUpdateDoubleLineOptions
+---@return string? updatedText
+function GUTIL:TooltipUpdateDoubleLine(options)
+    local tooltip = options.tooltipFrame or GameTooltip
+    local lineIterationCap = options.lineIterationCap or 200
+    local textLeft = options.textLeft
+    local updateLine = options.updateLine
+
+
+    if not textLeft or not updateLine then
+        return
+    end
+
+    for lineIndex = 1, lineIterationCap do
+        local lineLeft = _G[tooltip:GetName() .. 'TextLeft' .. lineIndex] --[[@as FontString?]]
+        local lineRight = _G[tooltip:GetName() .. 'TextRight' .. lineIndex] --[[@as FontString?]]
+
+        if not lineLeft then
+            break
+        end
+
+        if string.find(lineLeft:GetText(), textLeft) then
+            options.updateLine(lineLeft, lineRight)
+        end
+    end
 end
