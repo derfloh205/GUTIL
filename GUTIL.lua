@@ -929,22 +929,22 @@ function GUTIL:TooltipContains(options)
     return false
 end
 
----@class GUTIL.TooltipUpdateDoubleLineOptions
+---@class GUTIL.TooltipUpdateDoubleLineByIDOptions
 ---@field tooltipFrame GameTooltip? default: global GameTooltip
----@field textLeft? string the string to search for in the left text of the double line
 ---@field updateLine? fun(leftLine: FontString, rightLine: FontString?)
 ---@field lineIterationCap? number default: 200
+---@field gutilID any
 
----@param options GUTIL.TooltipUpdateDoubleLineOptions
+---@param options GUTIL.TooltipUpdateDoubleLineByIDOptions
 ---@return string? updatedText
-function GUTIL:TooltipUpdateDoubleLine(options)
+function GUTIL:TooltipUpdateDoubleLineByID(options)
     local tooltip = options.tooltipFrame or GameTooltip
     local lineIterationCap = options.lineIterationCap or 200
-    local textLeft = options.textLeft
     local updateLine = options.updateLine
+    local gutilID = options.gutilID
 
 
-    if not textLeft or not updateLine then
+    if not updateLine or not gutilID then
         return
     end
 
@@ -956,8 +956,55 @@ function GUTIL:TooltipUpdateDoubleLine(options)
             break
         end
 
-        if string.find(lineLeft:GetText(), textLeft) then
+        if lineLeft.gutilID == gutilID then
             options.updateLine(lineLeft, lineRight)
+            -- TODO: remove property afterwards?
+        end
+    end
+end
+
+---@class GUTIL.TooltipAddDoubleLineWithIDOptions
+---@field tooltipFrame GameTooltip? default: global GameTooltip
+---@field gutilID any
+---@field textLeft? string
+---@field textRight? string
+---@field leftTextRGB? table<number>
+---@field rightTextRGB? table<number>
+
+---@param options GUTIL.TooltipAddDoubleLineWithIDOptions
+---@return FontString? lineLeft
+---@return FontString? lineRight
+function GUTIL:TooltipAddDoubleLineWithID(options)
+    local tooltip = options.tooltipFrame or GameTooltip
+    local textLeft = options.textLeft or ""
+    local textRight = options.textRight or ""
+    local leftRGB = options.leftTextRGB or {}
+    local rightRGB = options.rightTextRGB or {}
+    local gutilID = options.gutilID
+
+    if not gutilID then
+        error("GUTIL Error: Tooltip Double Line needs unique gutilID")
+    end
+
+    local tempUID = tostring(GetTimePreciseSec())
+
+    tooltip:AddDoubleLine(tempUID, textRight, leftRGB[1], leftRGB[2], leftRGB[3], rightRGB[1], rightRGB[2],
+        rightRGB[3])
+
+    -- now update the double line and give it the gutilID
+    for lineIndex = 1, 200 do
+        local lineLeft = _G[tooltip:GetName() .. 'TextLeft' .. lineIndex] --[[@as FontString?]]
+        local lineRight = _G[tooltip:GetName() .. 'TextRight' .. lineIndex] --[[@as FontString?]]
+
+        if not lineLeft then
+            break
+        end
+
+        if lineLeft:GetText() == tempUID then
+            lineLeft.gutilID = gutilID
+            lineLeft:SetText(textLeft)
+
+            return lineLeft, lineRight
         end
     end
 end
