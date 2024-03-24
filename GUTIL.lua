@@ -352,7 +352,7 @@ function GUTIL:GetFormatter()
     formatter.white = function(text)
         return c(text, white)
     end
-    formatter.gg = function(text)
+    formatter.gold = function(text)
         return c(text, gold)
     end
     formatter.p = p
