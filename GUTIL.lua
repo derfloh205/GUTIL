@@ -310,7 +310,7 @@ function GUTIL:GetFormatter()
     local patreon = GUTIL.COLORS.PATREON
     local whisper = GUTIL.COLORS.WHISPER
     local white = GUTIL.COLORS.WHITE
-    local white = GUTIL.COLORS.GOLD
+    local gold = GUTIL.COLORS.GOLD
     
     local c = function(text, color)
         return GUTIL:ColorizeText(text, color)
