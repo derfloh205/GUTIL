@@ -311,7 +311,7 @@ function GUTIL:GetFormatter()
     local whisper = GUTIL.COLORS.WHISPER
     local white = GUTIL.COLORS.WHITE
     local gold = GUTIL.COLORS.GOLD
-    
+
     local c = function(text, color)
         return GUTIL:ColorizeText(text, color)
     end
@@ -732,8 +732,8 @@ function GUTIL:CompareVersionStrings(versionA, versionB)
         return 0
     end
 
-    local subversionA = strsplit(versionA)
-    local subversionB = strsplit(versionB)
+    local subversionA = strsplit(".", versionA)
+    local subversionB = strsplit(".", versionB)
 
     local result = compareSubversions(subversionA, subversionB)
 
