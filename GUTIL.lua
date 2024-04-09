@@ -1,5 +1,5 @@
 ---@class GUTIL-2.0
-local GUTIL = LibStub:NewLibrary("GUTIL-2.0", 16)
+local GUTIL = LibStub:NewLibrary("GUTIL-2.0", 17)
 if not GUTIL then return end
 
 --- CLASSICS insert
