@@ -722,21 +722,21 @@ end
 function GUTIL:CompareVersionStrings(versionA, versionB)
     local segmentsA, segmentsB = {}, {}
     for segment in versionA:gmatch("[^.]+") do
-       tinsert(segmentsA, tonumber(segment))
+        tinsert(segmentsA, tonumber(segment))
     end
     for segment in versionB:gmatch("[^.]+") do
-       tinsert(segmentsB, tonumber(segment))
+        tinsert(segmentsB, tonumber(segment))
     end
     local maxLength = math.max(#segmentsA, #segmentsB)
     for i = 1, maxLength do
-       local segA = segmentsA[i] or 0
-       local segB = segmentsB[i] or 0
-       
-       if segA < segB then
-          return -1
-       elseif segA > segB then
-          return 1
-       end
+        local segA = segmentsA[i] or 0
+        local segB = segmentsB[i] or 0
+
+        if segA < segB then
+            return -1
+        elseif segA > segB then
+            return 1
+        end
     end
     return 0
 end
