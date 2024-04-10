@@ -1,5 +1,5 @@
 ---@class GUTIL-2.0
-local GUTIL = LibStub:NewLibrary("GUTIL-2.0", 17)
+local GUTIL = LibStub:NewLibrary("GUTIL-2.0", 18)
 if not GUTIL then return end
 
 --- CLASSICS insert
@@ -774,12 +774,17 @@ function GUTIL:Split(t, splitFunc)
     return tableA, tableB
 end
 
-function GUTIL:IconToText(iconPath, height, width)
-    if not width then
-        return "\124T" .. iconPath .. ":" .. height .. "\124t"
-    else
-        return "\124T" .. iconPath .. ":" .. height .. ":" .. width .. "\124t"
-    end
+---@param iconPath string
+---@param height number
+---@param width number?
+---@param offsetX number?
+---@param offsetY number?
+function GUTIL:IconToText(iconPath, height, width, offsetX, offsetY)
+    width = width or height
+    offsetX = offsetX or 0
+    offsetY = offsetY or 0
+
+    return "\124T" .. iconPath .. ":" .. height .. ":" .. width .. ":" .. offsetX .. ":" .. offsetY .. "\124t"
 end
 
 function GUTIL:ValidateNumberString(str, min, max, allowDecimals)
