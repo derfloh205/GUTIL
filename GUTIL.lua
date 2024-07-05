@@ -424,7 +424,12 @@ function GUTIL:StripColor(text)
     return text
 end
 
+---@param value number
+---@param hundredPercentValue number
 function GUTIL:GetPercentRelativeTo(value, hundredPercentValue)
+    if hundredPercentValue == 0 then
+        return 100
+    end
     local oneP = hundredPercentValue / 100
     local percent = GUTIL:Round(value / oneP, 0)
 
