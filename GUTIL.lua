@@ -795,7 +795,7 @@ function GUTIL:Split(t, splitFunc)
     return tableA, tableB
 end
 
----@param iconPath string
+---@param iconPath string|number
 ---@param height number
 ---@param width number?
 ---@param offsetX number?
