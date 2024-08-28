@@ -423,6 +423,20 @@ GUTIL.COLORS = {
     WHITE = "ffffffff",
 }
 
+---@param value number
+---@return string
+function GUTIL:SeperateThousands(value)
+    local formatted = tostring(value)
+    local k
+    while true do
+        formatted, k = string.gsub(formatted, "^(-?%d+)(%d%d%d)", '%1,%2')
+        if k == 0 then
+            break
+        end
+    end
+    return formatted
+end
+
 -- Thanks to arkinventory
 function GUTIL:StripColor(text)
     local text = text or ""
@@ -473,6 +487,11 @@ function GUTIL:FormatMoney(copperValue, useColor, percentRelativeTo, separateTho
     if not useTextures then
         local f = self:GetFormatter()
         local g, s, c = self:GetMoneyValuesFromCopper(absValue)
+        if separateThousands then
+            g = GUTIL:SeperateThousands(g or 0)
+            s = GUTIL:SeperateThousands(s or 0)
+            c = GUTIL:SeperateThousands(c or 0)
+        end
 
         moneyText = g .. f.gold("g") .. s .. f.silver("s") .. c .. f.copper("c")
     else
