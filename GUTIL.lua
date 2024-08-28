@@ -416,8 +416,8 @@ GUTIL.COLORS = {
     GREY = "ff9d9d9d",
     ARTIFACT = "ffe6cc80",
     GOLD = "FFFFD000",
-    SILVER = "ffdadada",
-    COPPER = "ffc9803c",
+    SILVER = "FFE4E4E4",
+    COPPER = "FFCA8A4E",
     PATREON = "ffff424D",
     WHISPER = "ffff80ff",
     WHITE = "ffffffff",
@@ -473,7 +473,8 @@ function GUTIL:FormatMoney(copperValue, useColor, percentRelativeTo, separateTho
     if not useTextures then
         local f = self:GetFormatter()
         local g, s, c = self:GetMoneyValuesFromCopper(absValue)
-        moneyText = g .. f.gold("g") .. " " .. s .. f.silver("s") .. " " .. c .. f.copper("c")
+
+        moneyText = g .. f.gold("g") .. s .. f.silver("s") .. c .. f.copper("c")
     else
         moneyText = GetMoneyString(absValue, separateThousands)
     end
