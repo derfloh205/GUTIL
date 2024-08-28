@@ -415,7 +415,7 @@ GUTIL.COLORS = {
     UNCOMMON = "ff1eff00",
     GREY = "ff9d9d9d",
     ARTIFACT = "ffe6cc80",
-    GOLD = "fffffc01",
+    GOLD = "FFFFD000",
     SILVER = "ffdadada",
     COPPER = "ffc9803c",
     PATREON = "ffff424D",
@@ -452,8 +452,8 @@ end
 ---@param useColor? boolean -- colors the numbers green if positive and red if negative
 ---@param percentRelativeTo number? if included: will be treated as 100% and a % value in relation to the coppervalue will be added
 ---@param separateThousands? boolean
----@param noTextures? boolean
-function GUTIL:FormatMoney(copperValue, useColor, percentRelativeTo, separateThousands, noTextures)
+---@param useTextures? boolean
+function GUTIL:FormatMoney(copperValue, useColor, percentRelativeTo, separateThousands, useTextures)
     copperValue = GUTIL:Round(copperValue) -- there is no such thing as decimal coppers (we no fuel station here)
     local absValue = abs(copperValue)
     local minusText = ""
@@ -469,11 +469,13 @@ function GUTIL:FormatMoney(copperValue, useColor, percentRelativeTo, separateTho
         color = GUTIL.COLORS.RED
     end
 
-    local moneyText = GetMoneyString(absValue, separateThousands)
-    if noTextures then
+    local moneyText
+    if not useTextures then
         local f = self:GetFormatter()
         local g, s, c = self:GetMoneyValuesFromCopper(absValue)
         moneyText = g .. f.gold("g") .. " " .. s .. f.silver("s") .. " " .. c .. f.copper("c")
+    else
+        moneyText = GetMoneyString(absValue, separateThousands)
     end
 
     if useColor then
