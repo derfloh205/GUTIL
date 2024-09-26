@@ -549,7 +549,8 @@ function GUTIL:GetItemLocationFromItemID(itemID, includeBank)
             end
         end
         if includeBank then
-            for bag = NUM_BAG_SLOTS + 1, NUM_BAG_SLOTS + NUM_BANKBAGSLOTS do
+            -- +6 to include warbank
+            for bag = NUM_BAG_SLOTS + 1, NUM_BAG_SLOTS + NUM_BANKBAGSLOTS + 6 do
                 for slot = 1, C_Container.GetContainerNumSlots(bag) do
                     local slotItemID = C_Container.GetContainerItemID(bag, slot)
                     if slotItemID == itemID then
