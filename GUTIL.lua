@@ -1112,14 +1112,15 @@ GUTIL.FrameDistributor = GUTIL.Object:extend()
 ---@class GUTIL.FrameDistributor.ConstructorOptions
 ---@field iterationsPerFrame number? default: 1
 ---@field maxIterations number?
----@field continue fun(frameDistributor: GUTIL.FrameDistributor, key: any, value: any, currentIteration: number, progress: number): boolean? called each iteration, if returning false, iteration is stopped
+---@field iterationTable table
+---@field continue fun(frameDistributor: GUTIL.FrameDistributor, key: any, value: any, currentIteration: number, progress: number) called each iteration, has to call Continue
 ---@field cancel? fun(): boolean -- used to check for cancel between iterations
 ---@field finally? fun()  -- ran when finished and on cancel
----@field iterationTable table
 
 ---@param options GUTIL.FrameDistributor.ConstructorOptions
 function GUTIL.FrameDistributor:new(options)
     self.iterationsPerFrame = options.iterationsPerFrame or 1
+    self.maxIterations = options.maxIterations
 
     if self.iterationsPerFrame <= 0 then
         error("GUTIL Error: FrameDistributor iterationsPerFrame <= 0")
@@ -1137,6 +1138,13 @@ end
 function GUTIL.FrameDistributor:Continue()
     self.currentIteration = self.currentIteration + 1
 
+    if self.maxIterations then
+        if self.currentIteration >= self.maxIterations then
+            self.finally()
+            return
+        end
+    end
+
     local runInFrame = mod(self.currentIteration, self.iterationsPerFrame) > 0
 
     if self.cancel() then
@@ -1145,6 +1153,7 @@ function GUTIL.FrameDistributor:Continue()
     end
 
     local key, value = next(self.iterationTable, self.currentIterationKey)
+    self.currentIterationKey = key
 
     local currentProgress = self.currentIteration / self.iterationProgressStep
 
@@ -1153,14 +1162,11 @@ function GUTIL.FrameDistributor:Continue()
         return
     end
 
-    if not self.continue(self, key, value, self.currentIteration, currentProgress) then
-        self.finally()
-        return
-    end
-
     if runInFrame then
-        self:Continue()
+        self.continue(self, key, value, self.currentIteration, currentProgress)
     else
-        RunNextFrame(self.Continue)
+        RunNextFrame(function()
+            self.continue(self, key, value, self.currentIteration, currentProgress)
+        end)
     end
 end
