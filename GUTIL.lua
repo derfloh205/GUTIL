@@ -928,6 +928,7 @@ function GUTIL:OrderedPairs(t, compFunc)
     return GUTIL.OrderedNext, keys
 end
 
+---@deprecated use FrameDistributor
 --- spreads the iteration (unsorted random) of a given function over multiple frames (one frame per iteration) to reduce game lag for heavy processing.
 --- Use the finallyCallback to continue after the iteration ends
 ---@async
@@ -1099,5 +1100,67 @@ function GUTIL:TooltipAddDoubleLineWithID(options)
 
             return lineLeft, lineRight
         end
+    end
+end
+
+--- GUTIL.FrameDistributor
+
+---@class GUTIL.FrameDistributor
+---@overload fun(options:GUTIL.FrameDistributor.ConstructorOptions): GUTIL.FrameDistributor
+GUTIL.FrameDistributor = GUTIL.Object:extend()
+
+---@class GUTIL.FrameDistributor.ConstructorOptions
+---@field iterationsPerFrame number? default: 1
+---@field maxIterations number?
+---@field continue fun(frameDistributor: GUTIL.FrameDistributor, key: any, value: any, currentIteration: number, progress: number): boolean? called each iteration, if returning false, iteration is stopped
+---@field cancel? fun(): boolean -- used to check for cancel between iterations
+---@field finally? fun()  -- ran when finished and on cancel
+---@field iterationTable table
+
+---@param options GUTIL.FrameDistributor.ConstructorOptions
+function GUTIL.FrameDistributor:new(options)
+    self.iterationsPerFrame = options.iterationsPerFrame or 1
+
+    if self.iterationsPerFrame <= 0 then
+        error("GUTIL Error: FrameDistributor iterationsPerFrame <= 0")
+    end
+    self.currentIteration = 0
+    self.iterationTable = options.iterationTable or {}
+    self.tableSize = GUTIL:Count(self.iterationTable)
+    self.iterationProgressStep = (self.tableSize / 100)
+    self.continue = options.continue or function() end
+    self.cancel = options.cancel or function() return false end
+    self.finally = options.finally or function() end
+    self.currentIterationKey = nil
+end
+
+function GUTIL.FrameDistributor:Continue()
+    self.currentIteration = self.currentIteration + 1
+
+    local runInFrame = mod(self.currentIteration, self.iterationsPerFrame) > 0
+
+    if self.cancel() then
+        self.finally()
+        return
+    end
+
+    local key, value = next(self.iterationTable, self.currentIterationKey)
+
+    local currentProgress = self.currentIteration / self.iterationProgressStep
+
+    if not key then
+        self.finally()
+        return
+    end
+
+    if not self.continue(self, key, value, self.currentIteration, currentProgress) then
+        self.finally()
+        return
+    end
+
+    if runInFrame then
+        self:Continue()
+    else
+        RunNextFrame(self.Continue)
     end
 end
