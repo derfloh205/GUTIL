@@ -1112,8 +1112,8 @@ GUTIL.FrameDistributor = GUTIL.Object:extend()
 ---@class GUTIL.FrameDistributor.ConstructorOptions
 ---@field iterationsPerFrame number? default: 1
 ---@field maxIterations number?
----@field iterationTable table
----@field continue fun(frameDistributor: GUTIL.FrameDistributor, key: any, value: any, currentIteration: number, progress: number) called each iteration, has to call Continue
+---@field iterationTable table? if null iterates til maxIterations or cancelled
+---@field continue fun(frameDistributor: GUTIL.FrameDistributor, key: any?, value: any?, currentIteration: number, progress: number) called each iteration, has to call Continue
 ---@field cancel? fun(): boolean -- used to check for cancel between iterations
 ---@field finally? fun()  -- ran when finished and on cancel
 
@@ -1122,21 +1122,28 @@ function GUTIL.FrameDistributor:new(options)
     self.iterationsPerFrame = options.iterationsPerFrame or 1
     self.maxIterations = options.maxIterations
 
-    if self.iterationsPerFrame <= 0 then
-        error("GUTIL Error: FrameDistributor iterationsPerFrame <= 0")
-    end
     self.currentIteration = 0
-    self.iterationTable = options.iterationTable or {}
-    self.tableSize = GUTIL:Count(self.iterationTable)
-    self.iterationProgressStep = (self.tableSize / 100)
+    self.iterationTable = options.iterationTable
+    self.tableSize = GUTIL:Count(self.iterationTable or {})
+    if self.iterationTable then
+        self.iterationProgressStep = (self.tableSize / 100)
+    else
+        self.iterationProgressStep = 1
+    end
     self.continue = options.continue or function() end
     self.cancel = options.cancel or function() return false end
     self.finally = options.finally or function() end
     self.currentIterationKey = nil
+    self.breakActive = false
 end
 
 function GUTIL.FrameDistributor:Continue()
     self.currentIteration = self.currentIteration + 1
+
+    if self.breakActive then
+        self.finally()
+        return
+    end
 
     if self.maxIterations then
         if self.currentIteration >= self.maxIterations then
@@ -1145,19 +1152,21 @@ function GUTIL.FrameDistributor:Continue()
         end
     end
 
-    local runInFrame = mod(self.currentIteration, self.iterationsPerFrame) > 0
+    local runInFrame = self.iterationsPerFrame <= 0 or (mod(self.currentIteration, self.iterationsPerFrame) > 0)
 
     if self.cancel() then
         self.finally()
         return
     end
-
-    local key, value = next(self.iterationTable, self.currentIterationKey)
-    self.currentIterationKey = key
+    local key, value
+    if self.iterationTable then
+        key, value = next(self.iterationTable, self.currentIterationKey)
+        self.currentIterationKey = key
+    end
 
     local currentProgress = self.currentIteration / self.iterationProgressStep
 
-    if not key then
+    if self.iterationTable and not key then
         self.finally()
         return
     end
@@ -1169,4 +1178,9 @@ function GUTIL.FrameDistributor:Continue()
             self.continue(self, key, value, self.currentIteration, currentProgress)
         end)
     end
+end
+
+--- Stops iteration and calls finally callback
+function GUTIL.FrameDistributor:Break()
+    self.breakActive = true
 end
