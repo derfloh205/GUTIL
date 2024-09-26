@@ -1140,11 +1140,6 @@ end
 function GUTIL.FrameDistributor:Continue()
     self.currentIteration = self.currentIteration + 1
 
-    if self.breakActive then
-        self.finally()
-        return
-    end
-
     if self.maxIterations then
         if self.currentIteration >= self.maxIterations then
             self.finally()
@@ -1182,5 +1177,5 @@ end
 
 --- Stops iteration and calls finally callback
 function GUTIL.FrameDistributor:Break()
-    self.breakActive = true
+    self.finally()
 end
