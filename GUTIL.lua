@@ -683,7 +683,11 @@ end
 ---@param condition boolean
 ---@param callback function
 function GUTIL:NextFrameIF(condition, callback)
-
+    if condition then
+        RunNextFrame(callback)
+    else
+        callback()
+    end
 end
 
 function GUTIL:EquipItemByLink(link)
