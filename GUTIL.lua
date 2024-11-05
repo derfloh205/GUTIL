@@ -1207,7 +1207,6 @@ function GUTIL:CreateReuseableMenuUtilContextMenuFrame(descriptionElement, initC
         local customFrame = self.contextMenuFrames[frameID]
         if not customFrame then
             customFrame = CreateFrame("Frame")
-            --customFrame:SetSize(sizeX, sizeY)
             initCallback(customFrame)
             self.contextMenuFrames[frameID] = customFrame
         end
