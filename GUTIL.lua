@@ -1213,19 +1213,10 @@ function GUTIL:CreateReuseableMenuUtilContextMenuFrame(descriptionElement, initC
         customFrame:SetParent(frame)
         customFrame:SetAllPoints(frame)
         customFrame:Show()
+
+        -- to not make it appear in reuseable frames of other context menus
+        customFrame:SetScript("OnHide", function()
+            customFrame:Hide()
+        end)
     end)
-end
-
-function GUTIL:HideCustomContextMenuFrames()
-    for _, frame in pairs(self.contextMenuFrames or {}) do
-        frame:Hide()
-    end
-end
-
----wrapper that always hides customContextMenuFrames
----@param parent Frame
----@param initFunction fun(ownerRegion: Region, rootDescription: any)
-function GUTIL:CreateContextMenu(parent, initFunction)
-    self:HideCustomContextMenuFrames()
-    MenuUtil.CreateContextMenu(parent, initFunction)
 end
