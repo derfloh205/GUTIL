@@ -540,7 +540,8 @@ end
 function GUTIL:GetItemLocationFromItemID(itemID, includeBank)
     includeBank = includeBank or false
     local function FindBagAndSlot(itemID)
-        for bag = 0, NUM_BAG_SLOTS do
+        -- + 1 for reagent bag
+        for bag = 0, NUM_BAG_SLOTS + 1 do
             for slot = 1, C_Container.GetContainerNumSlots(bag) do
                 local slotItemID = C_Container.GetContainerItemID(bag, slot)
                 if slotItemID == itemID then
@@ -549,8 +550,7 @@ function GUTIL:GetItemLocationFromItemID(itemID, includeBank)
             end
         end
         if includeBank then
-            -- +6 to include warbank
-            for bag = NUM_BAG_SLOTS + 1, NUM_BAG_SLOTS + NUM_BANKBAGSLOTS + 6 do
+            for bag = Enum.BagIndex.CharacterBankTab_1, Enum.BagIndex.CharacterBankTab_6 + Constants.InventoryConstants.NumAccountBankSlots do
                 for slot = 1, C_Container.GetContainerNumSlots(bag) do
                     local slotItemID = C_Container.GetContainerItemID(bag, slot)
                     if slotItemID == itemID then
@@ -691,7 +691,7 @@ function GUTIL:NextFrameIF(condition, callback)
 end
 
 function GUTIL:EquipItemByLink(link)
-    for bag = BANK_CONTAINER, NUM_BAG_SLOTS + NUM_BANKBAGSLOTS do
+    for bag = Enum.BagIndex.Backpack, Enum.BagIndex.CharacterBankTab_6 + Constants.InventoryConstants.NumAccountBankSlots do
         for slot = 1, C_Container.GetContainerNumSlots(bag) do
             local item = C_Container.GetContainerItemLink(bag, slot)
             if item and item == link then
