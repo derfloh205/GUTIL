@@ -713,6 +713,10 @@ function GUTIL:GetQualityIconString(qualityID, sizeX, sizeY, offsetX, offsetY)
     return CreateAtlasMarkup("Professions-Icon-Quality-Tier" .. qualityID, sizeX, sizeY, offsetX, offsetY)
 end
 
+function GUTIL:GetQualityIconStringSimplified(qualityID, sizeX, sizeY, offsetX, offsetY)
+    return CreateAtlasMarkup("Professions-Icon-Quality-12-Tier" .. qualityID, sizeX, sizeY, offsetX, offsetY)
+end
+
 --- Counts the number of items that return true for the given function
 ---@generic K
 ---@generic V
