@@ -328,6 +328,8 @@ function GUTIL:GetFormatter()
     local p = GUTIL:GetQualityIconString(1, 15, 15) .. " "
     local s = GUTIL:GetQualityIconString(2, 15, 15) .. " "
     local P = GUTIL:GetQualityIconString(3, 15, 15) .. " "
+    local pg = GUTIL:GetQualityIconStringSimplified(1, 15, 15) .. " "
+    local PG = GUTIL:GetQualityIconStringSimplified(2, 15, 15) .. " "
     local a = "     "
 
     ---@class GUTIL.Formatter
@@ -372,6 +374,8 @@ function GUTIL:GetFormatter()
         return c(text, copper)
     end
     formatter.p = p
+    formatter.pg = pg
+    formatter.PG = PG
     formatter.s = s
     formatter.P = P
     formatter.a = a
