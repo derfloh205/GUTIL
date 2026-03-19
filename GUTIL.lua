@@ -552,7 +552,7 @@ end
 function GUTIL:GetItemLocationFromItemID(itemID, includeBank)
     includeBank = includeBank or false
     local function FindBagAndSlot(itemID)
-        for bag = 0, NUM_BAG_SLOTS do
+        for bag = 0, Enum.BagIndex.ReagentBag do
             for slot = 1, C_Container.GetContainerNumSlots(bag) do
                 local slotItemID = C_Container.GetContainerItemID(bag, slot)
                 if slotItemID == itemID then
@@ -561,8 +561,7 @@ function GUTIL:GetItemLocationFromItemID(itemID, includeBank)
             end
         end
         if includeBank then
-            -- +6 to include warbank
-            for bag = NUM_BAG_SLOTS + 1, NUM_BAG_SLOTS + NUM_BANKBAGSLOTS + 6 do
+            for bag = Enum.BagIndex.CharacterBankTab_1, Enum.BagIndex.AccountBankTab_5 do
                 for slot = 1, C_Container.GetContainerNumSlots(bag) do
                     local slotItemID = C_Container.GetContainerItemID(bag, slot)
                     if slotItemID == itemID then
