@@ -832,9 +832,10 @@ end
 
 ---@generic K
 ---@generic V
+---@generic R
 ---@param t table<K, V>
----@param initialValue any
----@param foldFunction fun(foldValue: any, nextElement: V, key: K): any
+---@param initialValue R
+---@param foldFunction fun(foldValue: R, nextElement: V, key: K): R
 function GUTIL:Fold(t, initialValue, foldFunction)
     local accumulator = initialValue
     for key, value in pairs(t) do
