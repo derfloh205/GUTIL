@@ -1292,33 +1292,3 @@ function GUTIL:DecodeBase64(str)
         return string.char(c)
     end))
 end
-
----@param table table
----@return string? encodedString in base64
-function GUTIL:EncodeTable(table)
-    local serializedTable = AceSerializer:Serialize(table)
-    local compressedData, compressError = LibCompress:Compress(serializedTable)
-
-    if not compressedData then
-        error("CraftSim: Failed to encode table: " .. tostring(compressError))
-        return nil
-    end
-    return self:EncodeBase64(compressedData)
-end
-
----@param string string base64 encoded string
----@return table?
-function GUTIL:DecodeTable(string)
-    local decodedData = self:DecodeBase64(string)
-    local decompressedData, decompressError = LibCompress:Decompress(decodedData)
-    if not decompressedData then
-        error("CraftSim: Failed to decode table: " .. tostring(decompressError))
-        return nil
-    end
-    local success, deserializedTable = AceSerializer:Deserialize(decompressedData)
-    if not success then
-        error("CraftSim: Failed to deserialize table")
-        return nil
-    end
-    return deserializedTable
-end
