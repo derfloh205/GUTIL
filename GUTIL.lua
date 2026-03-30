@@ -479,7 +479,8 @@ end
 ---@param percentRelativeTo number? if included: will be treated as 100% and a % value in relation to the coppervalue will be added
 ---@param separateThousands? boolean
 ---@param useTextures? boolean
-function GUTIL:FormatMoney(copperValue, useColor, percentRelativeTo, separateThousands, useTextures)
+---@param showCopper? boolean -- whether to show copper value false by default
+function GUTIL:FormatMoney(copperValue, useColor, percentRelativeTo, separateThousands, useTextures, showCopper)
     copperValue = GUTIL:Round(copperValue) -- there is no such thing as decimal coppers (we no fuel station here)
     local absValue = abs(copperValue) or 0
     local minusText = ""
@@ -519,7 +520,11 @@ function GUTIL:FormatMoney(copperValue, useColor, percentRelativeTo, separateTho
         cSep = f.copper("c")
     end
 
-    moneyText = cString .. cSep
+    if showCopper then
+        moneyText = cString .. cSep
+    else
+        moneyText = ""
+    end
 
     if sValue > 0 or gValue > 0 then
         moneyText = sString .. sSep .. moneyText
