@@ -1297,3 +1297,26 @@ function GUTIL:DecodeBase64(str)
         return string.char(c)
     end))
 end
+
+--- care for stackoverflow if there are recursive references
+---@param table table
+function GUTIL:CopyTableDeep(table)
+    local copy = {}
+    for k, v in pairs(table) do
+        if type(v) == "table" then
+            if  v == table then
+                copy[k] = nil
+            else
+                copy[k] = self:CopyTableDeep(v)
+            end
+        elseif type(v) == "number" then
+            copy[k] = tonumber(v)
+        elseif type(v) == "string" then
+            copy[k] = tostring(v)
+        else
+            copy[k] = v
+        end
+    end
+    return copy
+
+end
