@@ -243,6 +243,45 @@ function GUTIL:CreateRegistreeForEvents(events)
     return registree
 end
 
+--[[
+Custom Event System
+GUTIL:RegisterCustomEvents(registree, {"EVENT1", "EVENT2", ...})
+  - Registers the given table/object for custom events.
+  - When GUTIL:TriggerCustomEvent("EVENT1", ...), calls registree:EVENT1(...)
+GUTIL:TriggerCustomEvent("EVENT1", ...)
+  - Calls all registrees that registered for EVENT1, if they have a method EVENT1
+--]]
+
+GUTIL.__customEventRegistry = GUTIL.__customEventRegistry or {}
+
+--- Register a table/object for custom events. The table must have methods named after the events.
+---@param registree table
+---@param events string[]
+function GUTIL:RegisterCustomEvents(registree, events)
+    -- Allow registration even if the method is not yet defined; only check on trigger
+    for _, event in ipairs(events) do
+        if not self.__customEventRegistry[event] then
+            self.__customEventRegistry[event] = {}
+        end
+        if not tContains(self.__customEventRegistry[event], registree) then
+            table.insert(self.__customEventRegistry[event], registree)
+        end
+    end
+end
+
+--- Trigger a custom event, calling all registrees' methods for that event.
+---@param event string
+function GUTIL:TriggerCustomEvent(event, ...)
+    local registrees = self.__customEventRegistry[event]
+    if registrees then
+        for _, registree in ipairs(registrees) do
+            if type(registree[event]) == "function" then
+                pcall(registree[event], registree, ...)
+            end
+        end
+    end
+end
+
 ---Validate if a string is of format 100g50s10c
 ---@param moneyString string
 ---@return boolean valid
