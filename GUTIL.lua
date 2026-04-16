@@ -276,10 +276,20 @@ function GUTIL:TriggerCustomEvent(event, ...)
     if registrees then
         for _, registree in ipairs(registrees) do
             if type(registree[event]) == "function" then
+                if self.__eventLogger then
+                    self.__eventLogger:PushLogProperty("args", { ... })
+                    self.__eventLogger:LogDebug("{event}", event)
+                    self.__eventLogger:PopLogProperty("args")
+                end
                 pcall(registree[event], registree, ...)
             end
         end
     end
+end
+
+---@param logger LibLog-1.0.Logger
+function GUTIL:SetEventLogger(logger)
+    self.__eventLogger = logger
 end
 
 ---Validate if a string is of format 100g50s10c
