@@ -281,7 +281,9 @@ function GUTIL:TriggerCustomEvent(event, ...)
                     self.__eventLogger:LogDebug("{event}", event)
                     self.__eventLogger:PopLogProperty("args")
                 end
-                pcall(registree[event], registree, ...)
+                if registree[event] then
+                    registree[event](registree, ...)
+                end
             end
         end
     end
