@@ -278,7 +278,19 @@ function GUTIL:TriggerCustomEvent(event, ...)
             if type(registree[event]) == "function" then
                 if self.__eventLogger then
                     self.__eventLogger:PushLogProperty("args", { ... })
-                    self.__eventLogger:LogDebug("{event}", event)
+                    if self.__eventLoggerLevel == 1 then
+                        self.__eventLogger:LogVerbose("{event}", event)
+                    elseif self.__eventLoggerLevel == 2 then
+                        self.__eventLogger:LogDebug("{event}", event)
+                    elseif self.__eventLoggerLevel == 3 then
+                        self.__eventLogger:LogInfo("{event}", event)
+                    elseif self.__eventLoggerLevel == 4 then
+                        self.__eventLogger:LogWarning("{event}", event)
+                    elseif self.__eventLoggerLevel == 5 then
+                        self.__eventLogger:LogError("{event}", event)
+                    elseif self.__eventLoggerLevel == 6 then
+                        self.__eventLogger:LogFatal("{event}", event)
+                    end
                     self.__eventLogger:PopLogProperty("args")
                 end
                 if registree[event] then
@@ -290,8 +302,10 @@ function GUTIL:TriggerCustomEvent(event, ...)
 end
 
 ---@param logger LibLog-1.0.Logger
-function GUTIL:SetEventLogger(logger)
+---@param customLogLevel LibLog-1.0.LogLevel? What level should events be logged at, default: LogLevel.DEBUG (2)
+function GUTIL:SetEventLogger(logger, customLogLevel)
     self.__eventLogger = logger
+    self.__eventLoggerLevel = customLogLevel or 2
 end
 
 ---Validate if a string is of format 100g50s10c
