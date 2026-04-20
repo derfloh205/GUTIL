@@ -272,27 +272,29 @@ end
 --- Trigger a custom event, calling all registrees' methods for that event.
 ---@param event string
 function GUTIL:TriggerCustomEvent(event, ...)
+    -- log if possible
+    if self.__eventLogger then
+        self.__eventLogger:PushLogProperty("args", { ... })
+        if self.__eventLoggerLevel == 1 then
+            self.__eventLogger:LogVerbose("{event}", event)
+        elseif self.__eventLoggerLevel == 2 then
+            self.__eventLogger:LogDebug("{event}", event)
+        elseif self.__eventLoggerLevel == 3 then
+            self.__eventLogger:LogInfo("{event}", event)
+        elseif self.__eventLoggerLevel == 4 then
+            self.__eventLogger:LogWarning("{event}", event)
+        elseif self.__eventLoggerLevel == 5 then
+            self.__eventLogger:LogError("{event}", event)
+        elseif self.__eventLoggerLevel == 6 then
+            self.__eventLogger:LogFatal("{event}", event)
+        end
+        self.__eventLogger:PopLogProperty("args")
+    end
+
     local registrees = self.__customEventRegistry[event]
     if registrees then
         for _, registree in ipairs(registrees) do
             if type(registree[event]) == "function" then
-                if self.__eventLogger then
-                    self.__eventLogger:PushLogProperty("args", { ... })
-                    if self.__eventLoggerLevel == 1 then
-                        self.__eventLogger:LogVerbose("{event}", event)
-                    elseif self.__eventLoggerLevel == 2 then
-                        self.__eventLogger:LogDebug("{event}", event)
-                    elseif self.__eventLoggerLevel == 3 then
-                        self.__eventLogger:LogInfo("{event}", event)
-                    elseif self.__eventLoggerLevel == 4 then
-                        self.__eventLogger:LogWarning("{event}", event)
-                    elseif self.__eventLoggerLevel == 5 then
-                        self.__eventLogger:LogError("{event}", event)
-                    elseif self.__eventLoggerLevel == 6 then
-                        self.__eventLogger:LogFatal("{event}", event)
-                    end
-                    self.__eventLogger:PopLogProperty("args")
-                end
                 if registree[event] then
                     registree[event](registree, ...)
                 end
