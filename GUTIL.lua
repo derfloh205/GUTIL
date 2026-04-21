@@ -731,12 +731,12 @@ local function initEventWaitFrame()
         end
     end
 
-    GUTIL.eventWaitFrame:SetScript("OnEvent", function(event, ...)
+    GUTIL.eventWaitFrame:SetScript("OnEvent", function(self, event, ...)
         if not GUTIL.eventWaitFrame.callbackMap[event] then return end
         local callbacks = GUTIL.eventWaitFrame.callbackMap[event]
         for _, callback in ipairs(callbacks) do
             xpcall(callback, function()
-                print(debugstack("Error in Callback for GUTIL:WaitForEvent"))
+                print(debugstack())
             end, ...)
         end
         GUTIL.eventWaitFrame.callbackMap[event] = nil
@@ -753,7 +753,6 @@ function GUTIL:WaitForEvent(event, callback, maxWaitSeconds)
     GUTIL.eventWaitFrame = GUTIL.eventWaitFrame or initEventWaitFrame()
 
     GUTIL.eventWaitFrame:RegisterCallback(event, callback)
-
     if maxWaitSeconds then
         C_Timer.After(maxWaitSeconds, function()
             GUTIL.eventWaitFrame:UnregisterCallback(event, callback)
