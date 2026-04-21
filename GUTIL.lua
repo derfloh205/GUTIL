@@ -749,13 +749,17 @@ end
 ---@param event WowEvent
 ---@param callback function
 ---@param maxWaitSeconds number?
-function GUTIL:WaitForEvent(event, callback, maxWaitSeconds)
+---@param callOnMiss boolean? If true, the callback will be called even if the event is not fired within the maxWaitSeconds
+function GUTIL:WaitForEvent(event, callback, maxWaitSeconds, callOnMiss)
     GUTIL.eventWaitFrame = GUTIL.eventWaitFrame or initEventWaitFrame()
 
     GUTIL.eventWaitFrame:RegisterCallback(event, callback)
     if maxWaitSeconds then
         C_Timer.After(maxWaitSeconds, function()
             GUTIL.eventWaitFrame:UnregisterCallback(event, callback)
+            if callOnMiss then
+                callback()
+            end
         end)
     end
 end
