@@ -1399,6 +1399,10 @@ function GUTIL:ParseSlashCommandInput(input)
     local inQuotes = false
     local inLink = false
 
+    if input == "" then
+        return "", {}
+    end
+
     for i = 1, #input do
         local char = input:sub(i, i)
 
