@@ -243,14 +243,10 @@ function GUTIL:CreateRegistreeForEvents(events)
     return registree
 end
 
---[[
-Custom Event System
-GUTIL:RegisterCustomEvents(registree, {"EVENT1", "EVENT2", ...})
-  - Registers the given table/object for custom events.
-  - When GUTIL:TriggerCustomEvent("EVENT1", ...), calls registree:EVENT1(...)
-GUTIL:TriggerCustomEvent("EVENT1", ...)
-  - Calls all registrees that registered for EVENT1, if they have a method EVENT1
---]]
+---@param enabled boolean
+function GUTIL:SetEventDevToolLogging(enabled)
+    GUTIL.eventsToDevTool = enabled
+end
 
 GUTIL.__customEventRegistry = GUTIL.__customEventRegistry or {}
 
@@ -289,6 +285,12 @@ function GUTIL:TriggerCustomEvent(event, ...)
             self.__eventLogger:LogFatal("{event}", event)
         end
         self.__eventLogger:PopLogProperty("args")
+    end
+
+    if GUTIL.eventsToDevTool and DevTool then
+        local eventArgs = { ... }
+        local debugTable = GUTIL:Count(eventArgs) > 0 and eventArgs or nil
+        DevTool:AddData(debugTable, event)
     end
 
     local registrees = self.__customEventRegistry[event]
