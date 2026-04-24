@@ -289,7 +289,7 @@ function GUTIL:TriggerCustomEvent(event, ...)
 
     if GUTIL.eventsToDevTool and DevTool then
         local eventArgs = { ... }
-        local debugTable = GUTIL:Count(eventArgs) > 0 and eventArgs or nil
+        local debugTable = GUTIL:Count(eventArgs) > 0 and eventArgs or event
         DevTool:AddData(debugTable, event)
     end
 
